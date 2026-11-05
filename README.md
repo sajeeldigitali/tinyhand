@@ -2,11 +2,15 @@
 
 # TinyHand for Windows
 
+[![Latest release](https://img.shields.io/github/v/release/sajeeldigitali/tinyhand?filter=win-v*&display_name=tag)](https://github.com/sajeeldigitali/tinyhand/releases/latest)
 [![Platform: Windows 11](https://img.shields.io/badge/platform-Windows%2011-0078D4)](#install)
 [![Windows build](https://github.com/sajeeldigitali/tinyhand/actions/workflows/windows.yml/badge.svg?branch=windows)](https://github.com/sajeeldigitali/tinyhand/actions/workflows/windows.yml?query=branch%3Awindows)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 A tiny hand on a stick that points at things on your Windows screen.
+
+[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-0078D4?style=for-the-badge&logo=windows11&logoColor=white)](https://github.com/sajeeldigitali/tinyhand/releases/latest/download/TinyHand-win-Setup.exe)
+[![Visit website](https://img.shields.io/badge/Visit_website-ffffff?style=for-the-badge&logo=githubpages&logoColor=black)](https://sajeeldigitali.github.io/tinyhand/)
 
 <img src="./.github/banner.jpg" alt="TinyHand: a tiny hand on a stick pointing at the screen" />
 
@@ -18,12 +22,11 @@ Windows 11, x64 and ARM64.
 
 ## Install
 
-1. Open the [latest Windows build](https://github.com/sajeeldigitali/tinyhand/actions/workflows/windows.yml?query=branch%3Awindows)
-   (you need to be signed in to GitHub), pick the newest run and download **TinyHand-windows** under Artifacts.
-   Builds published as [releases](https://github.com/sajeeldigitali/tinyhand/releases) can be downloaded directly.
-2. Unzip it, then either:
+1. Download the latest release from [Releases](https://github.com/sajeeldigitali/tinyhand/releases/latest)
+   or the [website](https://sajeeldigitali.github.io/tinyhand/).
+2. Either:
    - run **TinyHand-win-Setup.exe**. It installs for you only (no admin), adds TinyHand to Start, opens it when
-     you sign in and updates itself, or
+     you sign in and updates itself from new releases, or
    - unzip **TinyHand-win-x64.zip** (**-arm64** on Snapdragon PCs) anywhere and run `TinyHand.exe`.
 3. The app isn't code-signed, so Windows may say "Windows protected your PC". Click **More info → Run anyway**.
 

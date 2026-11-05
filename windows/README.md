@@ -35,9 +35,14 @@ input part.
 
 Every push to the `windows` branch runs the [Windows workflow](../.github/workflows/windows.yml): unit tests,
 x64 and ARM64 builds, the self-test on a Windows runner (its screenshots and report are uploaded as the
-`selftest` artifact), and the installer and portable zips (the `TinyHand-windows` artifact).
+`selftest` artifact), then the installer and portable zips.
+
+The [Pages workflow](../.github/workflows/pages.yml) publishes the website in `site/` (built on the Mac site in
+`docs/`) to https://sajeeldigitali.github.io/tinyhand/.
 
 ## Release
 
-Bump `windows/VERSION`, commit, then push a tag such as `win-v1.0.1`. The workflow publishes a GitHub release
-with the installer, and installed copies update from it.
+Bump `windows/VERSION` and push to `windows`. When the self-test passes and no `win-v<version>` release exists
+yet, the workflow publishes one with the installer, the portable zips and the update feed that installed copies
+update from. Pushes that don't change the version upload the builds as a `TinyHand-windows` test artifact
+instead.

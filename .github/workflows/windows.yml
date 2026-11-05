@@ -3,7 +3,6 @@ name: Windows
 on:
   push:
     branches: [windows]
-    tags: ['win-v*']
   workflow_dispatch:
 
 concurrency:
@@ -63,7 +62,36 @@ jobs:
           $version = (Get-Content windows/VERSION).Trim()
           vpk pack --packId TinyHand --packVersion $version --packDir out/win-x64 --mainExe TinyHand.exe --packTitle TinyHand --icon windows/src/TinyHand/Assets/TinyHand.ico --runtime win-x64 --outputDir releases
 
-      - name: Upload the app
+      - name: Publish the release
+        id: release
+        if: github.ref == 'refs/heads/windows' && steps.selftest.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $version = (Get-Content windows/VERSION).Trim()
+          $tag = "win-v$version"
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Output "Release $tag already exists. Bump windows/VERSION to publish a new one."
+            "published=false" >> $env:GITHUB_OUTPUT
+            exit 0
+          }
+          $files = @(Get-ChildItem releases -File | Where-Object { $_.Name -notlike '*Portable.zip' } | ForEach-Object { $_.FullName })
+          $files += 'TinyHand-win-x64.zip', 'TinyHand-win-arm64.zip'
+          $notes = @"
+          Download **TinyHand-win-Setup.exe** and run it. It installs for you only, opens at sign-in and updates itself from new releases.
+
+          Or unzip **TinyHand-win-x64.zip** (**TinyHand-win-arm64.zip** on Snapdragon PCs) and run TinyHand.exe.
+
+          The app isn't code-signed yet, so Windows may say "Windows protected your PC". Choose **More info**, then **Run anyway**.
+
+          Windows 11, x64 and ARM64.
+          "@
+          gh release create $tag @files --target $env:GITHUB_SHA --title "TinyHand for Windows $version" --notes $notes
+          "published=true" >> $env:GITHUB_OUTPUT
+
+      - name: Upload the app as a test build
+        if: steps.release.outputs.published != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: TinyHand-windows
@@ -71,12 +99,3 @@ jobs:
             releases/*-Setup.exe
             TinyHand-win-x64.zip
             TinyHand-win-arm64.zip
-
-      - name: Publish a release
-        if: startsWith(github.ref, 'refs/tags/win-v')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          $version = (Get-Content windows/VERSION).Trim()
-          vpk upload github --repoUrl https://github.com/${{ github.repository }} --token $env:GH_TOKEN --publish --releaseName "TinyHand for Windows $version" --tag $env:GITHUB_REF_NAME --outputDir releases
-          gh release upload $env:GITHUB_REF_NAME TinyHand-win-x64.zip TinyHand-win-arm64.zip --clobber
