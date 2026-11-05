@@ -8,6 +8,8 @@
 
 A tiny hand on a stick that points at things on your Mac screen.
 
+> **On this branch:** a Windows 11 version lives in [`windows/`](windows/README.md).
+
 <img src="./.github/banner.jpg" alt="TinyHand: a tiny hand for your Mac" />
 
 [![Download for macOS](https://img.shields.io/badge/Download_for_macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/nilbuild/tinyhand/releases/latest/download/TinyHand.dmg)

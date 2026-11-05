@@ -1,0 +1,82 @@
+name: Windows
+
+on:
+  push:
+    branches: [windows]
+    tags: ['win-v*']
+  workflow_dispatch:
+
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Unit tests
+        run: dotnet test windows/tests/TinyHand.Core.Tests -c Release
+
+      - name: Publish x64 and ARM64
+        run: |
+          dotnet publish windows/src/TinyHand -c Release -r win-x64 --self-contained -o out/win-x64
+          dotnet publish windows/src/TinyHand -c Release -r win-arm64 --self-contained -o out/win-arm64
+
+      - name: Self-test on this machine
+        id: selftest
+        continue-on-error: true
+        timeout-minutes: 6
+        run: |
+          $p = Start-Process -FilePath out/win-x64/TinyHand.exe -ArgumentList '--self-test', "$pwd\selftest" -PassThru -Wait
+          if (Test-Path selftest/report.txt) { Get-Content selftest/report.txt }
+          if (Test-Path selftest/data/TinyHand.log) { Get-Content selftest/data/TinyHand.log -Tail 80 }
+          exit $p.ExitCode
+
+      - name: Upload self-test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selftest
+          path: selftest
+
+      - name: Zip the portable builds
+        run: |
+          Compress-Archive -Path out/win-x64/* -DestinationPath TinyHand-win-x64.zip
+          Compress-Archive -Path out/win-arm64/* -DestinationPath TinyHand-win-arm64.zip
+
+      - name: Build the installer
+        run: |
+          dotnet tool install -g vpk --version 1.2.161
+          if ($LASTEXITCODE -ne 0) { dotnet tool install -g vpk }
+          $version = (Get-Content windows/VERSION).Trim()
+          vpk pack --packId TinyHand --packVersion $version --packDir out/win-x64 --mainExe TinyHand.exe --packTitle TinyHand --icon windows/src/TinyHand/Assets/TinyHand.ico --runtime win-x64 --outputDir releases
+
+      - name: Upload the app
+        uses: actions/upload-artifact@v4
+        with:
+          name: TinyHand-windows
+          path: |
+            releases/*-Setup.exe
+            TinyHand-win-x64.zip
+            TinyHand-win-arm64.zip
+
+      - name: Publish a release
+        if: startsWith(github.ref, 'refs/tags/win-v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $version = (Get-Content windows/VERSION).Trim()
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --token $env:GH_TOKEN --publish --releaseName "TinyHand for Windows $version" --tag $env:GITHUB_REF_NAME --outputDir releases
+          gh release upload $env:GITHUB_REF_NAME TinyHand-win-x64.zip TinyHand-win-arm64.zip --clobber
