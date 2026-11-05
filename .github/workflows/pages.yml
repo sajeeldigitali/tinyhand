@@ -1,0 +1,44 @@
+name: Pages
+
+on:
+  push:
+    branches: [windows]
+    paths: ['docs/**', 'windows/site/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble the Windows site
+        run: |
+          mkdir _site
+          cp -R docs/. _site/
+          cp windows/site/index.html _site/index.html
+          rm -f _site/CNAME
+          base="https://sajeeldigitali.github.io/tinyhand/"
+          printf 'User-agent: *\nAllow: /\n\nSitemap: %ssitemap.xml\n' "$base" > _site/robots.txt
+          printf '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n  </url>\n</urlset>\n' "$base" "$(date -u +%F)" > _site/sitemap.xml
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
