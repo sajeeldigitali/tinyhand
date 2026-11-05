@@ -5,3 +5,8 @@ dist/
 *.dmg
 *.zip
 assets/unused/
+bin/
+obj/
+out/
+releases/
+selftest/
