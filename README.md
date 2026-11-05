@@ -1,40 +1,71 @@
 <img src="./.github/logo.png" width="80" />
 
-# TinyHand
+# TinyHand for Windows
 
-[![Latest release](https://img.shields.io/github/v/release/nilbuild/tinyhand?display_name=tag&sort=semver&cacheSeconds=3600)](https://github.com/nilbuild/tinyhand/releases/latest)
-[![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey)](https://tinyhand.app)
+[![Platform: Windows 11](https://img.shields.io/badge/platform-Windows%2011-0078D4)](#install)
+[![Windows build](https://github.com/sajeeldigitali/tinyhand/actions/workflows/windows.yml/badge.svg?branch=windows)](https://github.com/sajeeldigitali/tinyhand/actions/workflows/windows.yml?query=branch%3Awindows)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-A tiny hand on a stick that points at things on your Mac screen.
+A tiny hand on a stick that points at things on your Windows screen.
 
-> **On this branch:** a Windows 11 version lives in [`windows/`](windows/README.md).
+<img src="./.github/banner.jpg" alt="TinyHand: a tiny hand on a stick pointing at the screen" />
 
-<img src="./.github/banner.jpg" alt="TinyHand: a tiny hand for your Mac" />
+This branch is a Windows 11 port of [TinyHand](https://github.com/nilbuild/tinyhand), the macOS app by
+[@nilbuild](https://x.com/nilbuild). It has the same 36 hands, laser dot, drawing, tap sounds and settings,
+rebuilt for Windows. Free, and MIT licensed like the original.
 
-[![Download for macOS](https://img.shields.io/badge/Download_for_macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/nilbuild/tinyhand/releases/latest/download/TinyHand.dmg)
-[![Visit website](https://img.shields.io/badge/Visit_website-ffffff?style=for-the-badge&logo=safari&logoColor=black)](https://tinyhand.app)
-
-macOS 13 or later, Apple Silicon and Intel.
+Windows 11, x64 and ARM64.
 
 ## Install
 
-Open `TinyHand.dmg`, drag TinyHand to Applications and allow **Accessibility** when asked. It needs that to turn your clicks into taps. TinyHand updates itself.
+1. Open the [latest Windows build](https://github.com/sajeeldigitali/tinyhand/actions/workflows/windows.yml?query=branch%3Awindows)
+   (you need to be signed in to GitHub), pick the newest run and download **TinyHand-windows** under Artifacts.
+   Builds published as [releases](https://github.com/sajeeldigitali/tinyhand/releases) can be downloaded directly.
+2. Unzip it, then either:
+   - run **TinyHand-win-Setup.exe**. It installs for you only (no admin), adds TinyHand to Start, opens it when
+     you sign in and updates itself, or
+   - unzip **TinyHand-win-x64.zip** (**-arm64** on Snapdragon PCs) anywhere and run `TinyHand.exe`.
+3. The app isn't code-signed, so Windows may say "Windows protected your PC". Click **More info → Run anyway**.
+
+TinyHand lives in the system tray, next to the clock. Windows 11 hides new tray icons, so if you can't see the
+hand, click **^** next to the clock and drag it onto the taskbar.
 
 ## Use
 
 | | |
 |---|---|
-| Click the menu bar icon, or **⌃⌥H** | Turn the pointer on or off |
-| Right-click the menu bar icon | Menu and Settings |
+| Click the tray icon, or **Ctrl+Alt+H** | Turn the pointer on or off |
+| Right-click the tray icon | Menu and Settings |
 | Click | Tap (nothing underneath gets clicked) |
 | Hold and drag | Draw on the screen |
-| **⌃⌥X** | Clear the drawing |
+| Hold **Alt** and click | Click for real |
+| **Ctrl+Alt+X** | Clear the drawing |
 | **Esc** | Clear everything and turn the pointer off |
 
-While the pointer is on, a small toolbar at the bottom of the screen lets you pick one of
-36 hands or a laser dot, mute the tap sound, or exit.
+While the pointer is on, a small toolbar at the bottom of the screen lets you pick one of 36 hands or a laser
+dot, change the ink colour, mute the tap sound, or exit. Clicks on the taskbar and on open menus stay real.
+
+Settings (right-click the tray icon) lets you change the shortcuts and the click-for-real key, pick which hands
+sit in the toolbar, make your own hand from an image, and set the size, shadow, ink colour, fade time and sound.
+
+## Differences from the Mac version
+
+- No permission prompt: Windows doesn't need Accessibility access.
+- Hold **Alt**, **Ctrl** or **Shift** (your choice, Alt by default) to click for real. Alt+Tab and other
+  shortcuts still work while you hold it.
+- The hand can't appear above the Start menu, Task Manager or apps running as administrator, and clicks on
+  those stay real.
+- Touchscreen and pen taps aren't caught, only the mouse and touchpad.
+
+## Problems
+
+Settings → About → **Show log file** opens `%AppData%\TinyHand\TinyHand.log`. Send it along with what happened.
+If the mouse cursor ever goes missing, start TinyHand again, or sign out and back in.
+
+## Build
+
+See [windows/README.md](windows/README.md). The original Swift source for macOS is still in `Sources/`.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). TinyHand was created by Kamran Ahmed; this is an unofficial Windows port.
